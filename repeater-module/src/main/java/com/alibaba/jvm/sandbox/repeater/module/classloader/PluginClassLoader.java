@@ -20,6 +20,7 @@ import java.util.jar.JarFile;
 
 /**
  * 插件类加载器；父类加载器是sandbox's module classLoader
+ * 使用了sandbox的Stealth标签，这个类加载器加载了的类不会被sandbox感知，所以不会捕捉他的调用事件
  * <p>
  *
  * @author zhaoyb1990

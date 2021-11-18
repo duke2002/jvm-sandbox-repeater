@@ -6,6 +6,7 @@ import java.beans.ConstructorProperties;
 
 
 /**
+ * 选择结果
  * <p>
  *
  * @author zhaoyb1990

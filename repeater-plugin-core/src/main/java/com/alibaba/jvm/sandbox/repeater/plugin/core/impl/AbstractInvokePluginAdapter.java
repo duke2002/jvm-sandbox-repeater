@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link AbstractInvokePluginAdapter}是{@link InvokePlugin}的抽象适配，提供了标准的模块生命周期处理流程；
+ * 该类解析并转换成观察事件
  * <p>
  * 同时注入了{@link com.alibaba.jvm.sandbox.repeater.plugin.core.impl.api.DefaultInvocationListener}
  * <p>

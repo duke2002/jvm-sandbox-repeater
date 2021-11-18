@@ -1,3 +1,46 @@
+1. repeater-module
+repeater 模块，负责的是模块对外的交互、插件装配以及一些 spring 的类信息捕捉。
+
+2. repeater-plugin-api
+repeater 插件 api 库，主要定义了一些实体类、api、spi 和 exception，这里的每个类以及方法都有详细注释说明用途，
+   是一个非常重要的阅读源码入口
+
+3. repeater-plugin-core
+repeater 插件 core 库，实现了 api 中的接口逻辑，是 repeater 中最核心模块，从这里可以了解到 api 中不同用途的接口是怎么样实现的，
+   并且可以从这里了解整个录制回放过程的实现链路。
+
+4. repeater-plugins
+repeater 的插件库，以 repeater-plugin-core 为基础，针对不同类型的协议、不同类型的中间件进行拓展形成插件。
+   每一个插件都是一个模块，而且实现代码非常少。官方有提供插件开发解析（传送门），
+   从这篇解析我不得不感叹这个 repeater 插件 api 库的设计真是太棒了！少量的代码就能实现有效的拓展。
+
+
+## 辅助模块
+1. repeater-console
+repeater 服务端模式下的服务端应用，提供内存模式下的保存录制记录、回放记录的方法。
+另外也包含了官方文档示例中使用的应用接口。
+
+2. repeater-client
+从 java 回放器的备注信息上来看，是在一个为了支持在 attach 模式下也能获取到 spring 内部 bean 的模块，需要引入应用代码中使用。
+
+3. hessian-lite
+序列化工具库，repeater 主要使用的序列化类型是 hessian 序列化，录制结果保存与读取、回放结果保存与读取都使用到了这个工具库。
+
+4. bin
+脚本库，包含打包脚本、健康检查脚本以及一些 standlone 模式下的配置文件等。
+本地开发可以直接使用install-local.sh完成打包 + 本地部署。
+从bootstrap.sh中可以看到如何启用调试模式，如果以 agent 模式启动，建议将 suspend=n 改为 suspend=y 即可
+
+```java
+${JAVA_HOME}/bin/java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 \
+-javaagent:${HOME}/sandbox/lib/sandbox-agent.jar=server.port=8820\;server.ip=0.0.0.0 \
+-Dapp.name=repeater \
+-Dapp.env=daily \
+-jar ${HOME}/.sandbox-module/repeater-bootstrap.jar
+docs
+```
+
+
 ![logo](https://sandbox-ecological.oss-cn-hangzhou.aliyuncs.com/repeater-logo.png)
 
 [![Build Status](https://travis-ci.org/alibaba/jvm-sandbox-repeater.svg?branch=master)](https://travis-ci.org/alibaba/jvm-sandbox-repeater)

@@ -2,20 +2,52 @@ package com.alibaba.jvm.sandbox.repeater.plugin.domain;
 
 
 /**
+ * Mock调用
  * <p>
  *
  * @author zhaoyb1990
  */
 public class MockInvocation implements java.io.Serializable {
+
+    /**
+     * mock 步骤的序号
+     */
     private int index;
+    /**
+     * 回放记录的 traceId
+     */
     private String traceId;
+    /**
+     * 回放结果的 repeatId
+     */
     private String repeatId;
+    /**
+     * 这个 mock 步骤是否执行成功
+     */
     private boolean success;
+    /**
+     * 这个 mock 步骤是否被跳过
+     */
     private boolean skip;
+    /**
+     * 这个 mock 步骤的耗时
+     */
     private long cost;
+    /**
+     * 这个 mock 步骤的录制时的标识 url
+     */
     private String originUri;
+    /**
+     * 这个 mock 步骤回放时标识 url
+     */
     private String currentUri;
+    /**
+     * 这个 mock 步骤的录制时的入参
+     */
     private Object[] originArgs;
+    /**
+     * 这个 mock 步骤回放时入参
+     */
     private Object[] currentArgs;
 
     public int getIndex() {

@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * console提供的单个录制记录的描述，包括创建时间，录制时间，appName,主机名，traceId,原始录制记录。
  * {@link Record}
  * <p>
  *

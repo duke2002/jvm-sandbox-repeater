@@ -19,6 +19,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+ * 默认消息广播器，主要实现与repeater-console进行交互的逻辑，包块保存录制记录，回放结果，获取录制记录等
  * {@link DefaultBroadcaster} 默认的Http方式的消息投递实现
  *
  * @author zhaoyb1990

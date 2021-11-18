@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link DefaultInvocationListener} 默认的调用监听实现
+ * {@link DefaultInvocationListener} 默认的调用监听实现。调用处理完成后进行序列化，判断需要上传到repeater-console还是存放为子调用
  * <p>
  *
  * @author zhaoyb1990

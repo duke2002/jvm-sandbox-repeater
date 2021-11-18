@@ -12,7 +12,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Lists;
 
 /**
- * {@link RecordCache} 录制缓存
+ * {@link RecordCache} 录制缓存。
+ * 录制缓存，录制过程中如何记录各个调用之间的关系。
  * <p>
  *
  * @author zhaoyb1990

@@ -61,7 +61,7 @@ public class HttpStandaloneListener extends DefaultEventListener implements Invo
         if (event.type == Event.Type.BEFORE) {
             BeforeEvent be = (BeforeEvent) event;
             Object request = be.argumentArray[0];
-            if (request instanceof HttpServletRequest) {
+            if (request instanceof HttpServletRequest) { //假如是HTTP调用
                 HttpServletRequest req = ((HttpServletRequest) request);
                 // header透传开始回放；
                 String traceIdX = req.getHeader(Constants.HEADER_TRACE_ID_X);

@@ -1,6 +1,7 @@
 package com.alibaba.jvm.sandbox.repeater.module;
 
 /**
+ * 模块ID，模块版本常量
  * <p>
  *
  * @author zhaoyb1990

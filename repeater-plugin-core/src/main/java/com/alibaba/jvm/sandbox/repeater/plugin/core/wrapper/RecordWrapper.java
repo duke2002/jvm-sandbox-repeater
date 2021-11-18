@@ -9,6 +9,7 @@ import com.alibaba.jvm.sandbox.repeater.plugin.domain.RecordModel;
 
 
 /**
+ * repeater提供的一个完整的录制记录。包括appName,环境名，主机名，traceId,入口描述，入口调用记录，子调用记录
  * <p>
  *
  * @author zhaoyb1990

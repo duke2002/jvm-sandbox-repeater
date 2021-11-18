@@ -93,10 +93,12 @@ public class ModuleConfigServiceImpl implements ModuleConfigService {
 
     @Override
     public RepeaterResult<ModuleConfigBO> push(ModuleConfigParams params) {
+        //去module_config表里面查询数据是否存在
         ModuleConfig moduleConfig = moduleConfigDao.query(params);
         if (moduleConfig == null) {
             return ResultHelper.fail("config not exist");
         }
+        //去module_info表里面查询数据是否存在
         ModuleInfoParams moduleInfoParams = new ModuleInfoParams();
         moduleInfoParams.setAppName(params.getAppName());
         moduleInfoParams.setEnvironment(params.getEnvironment());
@@ -106,6 +108,7 @@ public class ModuleConfigServiceImpl implements ModuleConfigService {
         if (result == null || !result.isSuccess()) {
             return ResultHelper.fail("no alive module, don't need to push config.");
         }
+        //获取module_config表里config字段的配置数据进行反序列化为RepeaterConfig对象，放入到内存中
         String data;
         try {
             RepeaterConfig config = JacksonUtil.deserialize(moduleConfig.getConfig(),RepeaterConfig.class);
@@ -113,6 +116,7 @@ public class ModuleConfigServiceImpl implements ModuleConfigService {
         } catch (SerializeException e) {
             return ResultHelper.fail("serialize config occurred error, message = " + e.getMessage());
         }
+        // 向对应的repeater client端进行配置推送请求
         final Map<String,String> paramMap = new HashMap<>(2);
         paramMap.put(Constants.DATA_TRANSPORT_IDENTIFY,  URLEncoder.encode(data));
         final Map<String,HttpUtil.Resp> respMap = Maps.newHashMap();
@@ -120,6 +124,7 @@ public class ModuleConfigServiceImpl implements ModuleConfigService {
             HttpUtil.Resp resp = HttpUtil.doGet(String.format(configURL, module.getIp(), module.getPort()), paramMap);
             respMap.put(module.getIp(), resp);
         });
+        //返回相应中取出ip信息并拼接页面相应信息
         String ips = respMap.entrySet().stream().filter(entry -> !entry.getValue().isSuccess()).map(Map.Entry::getKey).collect(Collectors.joining(","));
         if (StringUtils.isNotEmpty(ips)) {
             return ResultHelper.success(ips + " push failed.");

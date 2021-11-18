@@ -45,24 +45,42 @@ public class RecordServiceImpl implements RecordService {
     @Resource
     private ModelConverter<Record, RecordDetailBO> recordDetailConverter;
 
+    /**
+     * 添加录制的记录
+     * @param body post内存
+     * @return
+     */
     @Override
     public RepeaterResult<String> saveRecord(String body) {
         try {
+            // 把输入值反序列化成RecordWrapper对象
             RecordWrapper wrapper = SerializerWrapper.hessianDeserialize(body, RecordWrapper.class);
+            // 如果反序列化失败，直接返回错误
             if (wrapper == null || StringUtils.isEmpty(wrapper.getAppName())) {
                 return RepeaterResult.builder().success(false).message("invalid request").build();
             }
+            // 把wrapper+原始传入的body，组合成record。主要是添加了一个创建日期，大部分 wrapper 和 record 一一对应地存储，
+            // 以及把整个 body 放到 wrapperRecord 对象中作为存档
             Record record = ConvertUtil.convertWrapper(wrapper, body);
             recordDao.insert(record);
+            // 保存成功，就可以返回了。
             return RepeaterResult.builder().success(true).message("operate success").data("-/-").build();
         } catch (Throwable throwable) {
             return RepeaterResult.builder().success(false).message(throwable.getMessage()).build();
         }
     }
 
+    /**
+     * 根据应用名和traceId， 获取序列化后的录制数据
+     * @param appName 应用名
+     * @param traceId traceId
+     * @return
+     */
     @Override
     public RepeaterResult<String> get(String appName, String traceId) {
         Record record = recordDao.selectByAppNameAndTraceId(appName, traceId);
+        // 在此处打断点，然后调试中执行SerializerWrapper.hessianDeserialize(record.getWrapperRecord(),
+        // RecordModel.class)即可查看详情
         if (record == null) {
             return RepeaterResult.builder().success(false).message("data not exits").build();
         }
@@ -93,6 +111,11 @@ public class RecordServiceImpl implements RecordService {
         return RepeaterResult.builder().success(true).data(recordDetailConverter.convert(record)).build();
     }
 
+    /**
+     * 根据repeatId获取回放执行结果
+     * @param repeatId 回放ID
+     * @return
+     */
     @Override
     public RepeaterResult<RepeatModel> callback(String repeatId) {
         return null;

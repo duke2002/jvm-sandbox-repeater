@@ -26,6 +26,15 @@ public class ConfigFacadeApi {
     @Resource
     private ModuleConfigService moduleConfigService;
 
+    /**
+     * 获取录制回放配置
+     *
+     * 供 repeater 调用的接口，repeater 以非 standalone 模式启动时会调用该接口获取录制回放配置，获取失败可能导致 repeater 启动失败。
+     * 虽然接口有传入参数，但是由于接口没有实现根据 appName 以及 env 来区分不同的配置，传任何参数都会指向一个配置
+     * @param appName 应用名称
+     * @param env 环境名称
+     * @return
+     */
     @RequestMapping("/config/{appName}/{env}")
     public RepeaterResult<RepeaterConfig> getConfig(@PathVariable("appName") String appName,
                                                     @PathVariable("env") String env) {

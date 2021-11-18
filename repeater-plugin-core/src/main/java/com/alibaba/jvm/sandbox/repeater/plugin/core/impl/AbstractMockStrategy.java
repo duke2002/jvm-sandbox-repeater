@@ -16,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * {@link AbstractMockStrategy}抽象的mock策略执行；子类只需要实现{@code select}方法即可
+ * 执行mock的流程，如何跟踪回放流量以及保存回放的mock结果
+ *
  * <p>
  *
  * @author zhaoyb1990
@@ -43,6 +45,7 @@ public abstract class AbstractMockStrategy implements MockStrategy {
             /*
              * do select
              */
+            //按照一定的策略匹配一次自调用记录
             SelectResult select = select(request);
             Invocation invocation = select.getInvocation();
             MockInvocation mi = new MockInvocation();
@@ -56,6 +59,8 @@ public abstract class AbstractMockStrategy implements MockStrategy {
             RepeatCache.addMockInvocation(mi);
             // matching success
             if (select.isMatch() && invocation != null) {
+                // 找到了匹配的子调用，直接在回放的时候mock掉本次子调用
+                // invocation代表着回放时获取到的一个调用记录，可以是入口调用也可以是子调用，当然mock肯定是针对子调用进行的。
                 response = MockResponse.builder()
                         .action(invocation.getThrowable() == null ? Action.RETURN_IMMEDIATELY : Action.THROWS_IMMEDIATELY)
                         .throwable(invocation.getThrowable())
@@ -65,6 +70,7 @@ public abstract class AbstractMockStrategy implements MockStrategy {
                 mi.setOriginUri(invocation.getIdentity().getUri());
                 mi.setOriginArgs(invocation.getRequest());
             } else {
+                //找不到对应的子调用，直接抛出异常
                 response = MockResponse.builder()
                         .action(Action.THROWS_IMMEDIATELY)
                         .throwable(new RepeatException("no matching invocation found")).build();

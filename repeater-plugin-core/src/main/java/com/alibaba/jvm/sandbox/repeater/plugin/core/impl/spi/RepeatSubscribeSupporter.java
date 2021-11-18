@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 /**
+ * 回放事件总线以及订阅处理入口
  * <p>
  *
  * @author zhaoyb1990

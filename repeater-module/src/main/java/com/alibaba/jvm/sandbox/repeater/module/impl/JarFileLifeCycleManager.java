@@ -19,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 插件加载器 ，主要用来加载录制回放插件，另外也支持通过jar包路径加载插件的方法。
+ *
+ * 服务/插件挂载的方法，在这里可以通过服务注解
  * <p>
  *
  * @author zhaoyb1990

@@ -9,8 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * 通过ServiceLoader加载，看了调用方主要是JarFileLifeCycleManager，主要是用来加载repeater插件的的spi实现
  * {@link SPILoader} 加载spi
  * <p>
+ * 通过这个方法可以通过@MetaInfServices注解将插件中SPI接口的实现类加载。
  *
  * @author zhaoyb1990
  */

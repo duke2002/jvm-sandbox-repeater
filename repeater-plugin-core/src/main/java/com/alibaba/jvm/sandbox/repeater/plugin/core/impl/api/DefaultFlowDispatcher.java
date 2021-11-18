@@ -11,7 +11,7 @@ import com.alibaba.jvm.sandbox.repeater.plugin.exception.RepeatException;
 import com.alibaba.jvm.sandbox.repeater.plugin.spi.Repeater;
 
 /**
- * {@link DefaultFlowDispatcher} 默认的流量分配器实现
+ * {@link DefaultFlowDispatcher} 默认的流量分配器实现。初始化上下文，选择回放器执行回放。
  * <p>
  *
  * @author zhaoyb1990

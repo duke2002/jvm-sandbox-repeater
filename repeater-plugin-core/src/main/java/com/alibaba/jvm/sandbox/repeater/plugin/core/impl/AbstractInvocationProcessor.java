@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 调用处理器，主要实现将调用事件中的信息转换成Invocation对象的转换处理，回放流程中的mock执行以及mock结果处理。
  * <p>
  *
  * @author zhaoyb1990

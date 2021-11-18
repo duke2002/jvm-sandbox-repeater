@@ -10,8 +10,17 @@ package com.alibaba.jvm.sandbox.repeater.plugin.domain;
 
 public class RepeaterResult<T> {
 
+    /**
+     * 请求是否成功
+     */
     private boolean success;
+    /**
+     * 回放结果数据，后面的字段全为 data 中的数据
+     */
     private T data;
+    /**
+     * operate success
+     */
     private String message;
 
     public static <T> Builder<T> builder() {

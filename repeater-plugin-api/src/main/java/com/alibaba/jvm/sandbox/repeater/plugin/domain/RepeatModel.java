@@ -4,6 +4,7 @@ import java.util.List;
 
 
 /**
+ * repeater提供的一个回放结果记录。包括repeatId,是否完成，实际返回值，原始返回值，diff记录，耗时，tranceId
  * {@link RepeatModel} 回放消息数据类型
  * <p>
  *
@@ -11,20 +12,44 @@ import java.util.List;
  */
 public class RepeatModel implements java.io.Serializable {
 
+    /**
+     * 回放结果的 repeatId
+     */
     private String repeatId;
 
+    /**
+     * 是否已回放完成
+     */
     private boolean finish;
 
+    /**
+     * 本次回放返回的结果
+     */
     private Object response;
 
+    /**
+     * 录制记录中这个入口调用返回的结果
+     */
     private Object originResponse;
 
+    /**
+     * 回放结果与录制记录中的结果差异（由于官方没有实现该功能，所以默认返回 null）
+     */
     private Object diff;
 
+    /**
+     * 回放耗时
+     */
     private Long cost;
 
+    /**
+     * 回放记录的 traceId
+     */
     private String traceId;
 
+    /**
+     * 回放过程中被 mock 的步骤的执行结果
+     */
     private List<MockInvocation> mockInvocations;
 
     public String getRepeatId() {

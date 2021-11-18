@@ -20,7 +20,7 @@ public class TraceGenerator {
     private static String IP_COMPLETION = getCompletionIp();
 
     private static String END_FLAG = "ed";
-
+    //产生一个追踪traceId：IP地址+系统时间戳+ed
     public static String generate() {
         StringBuilder builder = new StringBuilder(32);
         builder.append(IP_COMPLETION)

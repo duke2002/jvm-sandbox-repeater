@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * <b></b>在整个录制过程中，repeater进行录制的处理流程是DefaultEventListener类中实现。</b>
+ *
  * {@link DefaultEventListener} 默认的事件监听器实现类
  * <p>
  * 事件监听实现主要对接sandbox分发过来的事件
@@ -32,6 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * 对于多个入口方法组合（例如：onRequest获取入参onResponse获取返回值）这种情况，需要重写 doBefore/doRequest/doThrow 自己控制流程
  * </p>
  *
+ * 在DefaultEventListener中，承接的是所有事件的处理，也就是说无论是录制操作，还是回放操作，
+ * 都是集中在这个类中实现的，只是根据不同的条件来区分是录制流量还是回放流量，从而判断该执行录制还是该执行回放。
  * @author zhaoyb1990
  */
 public class DefaultEventListener implements EventListener {
@@ -99,6 +103,7 @@ public class DefaultEventListener implements EventListener {
             }
             /*
              * processor filter
+             * 判断是否是插件调用处理器设置为忽略的事件。每个插件处理不同。
              */
             if (processor != null && processor.ignoreEvent((InvokeEvent) event)) {
                 if (log.isDebugEnabled()) {
@@ -137,13 +142,19 @@ public class DefaultEventListener implements EventListener {
             /*
              * 入口插件 && 完成事件
              */
-            clearContext(event);
-        }
+             clearContext(event);
+         }
     }
 
     /**
      * 处理before事件
      *
+     * 1. 判断当前流量是否为回放流量，若为回放流量则调用processor.doMock方法执行Mock，不执行后续操作。
+     * 2. 若当前流量非回放流量，则基于当前获取到的信息拼接Invocation实例。
+     *    其中会调用插件调用处理器的assembleRequest、assembleResponse、assembleThrowable、assembleIdentity方法进行请求参数、
+     *    返回结果、抛出异常、调用标识的拼接。
+     * 3. 根据插件调用处理器的设定，判断是否需要进行Invocation中的request、response、throwable参数的序列化。
+     * 4. 将当前事件的Invocation信息存放到录制缓存中。
      * @param event before事件
      */
     protected void doBefore(BeforeEvent event) throws ProcessControlException {
@@ -190,6 +201,7 @@ public class DefaultEventListener implements EventListener {
     /**
      * 计算采样率
      *
+     * 执行采样计算（只有entrance插件负责计算采样，子调用插件不计算)，该过滤条件与repeaterConfig中的sample字段有关。
      * @param event 事件
      * @return 是否采样
      */
@@ -203,6 +215,17 @@ public class DefaultEventListener implements EventListener {
     }
 
     /**
+     * return事件与throw事件的处理逻辑基本一致。
+     *
+     * 判断当前流量是否为回放流量，若为回放流量则不执行后续操作。
+     *
+     * 从录制缓存中获取对应的Invocation实例，如果获取失败则打印失败日志，不执行后续操作
+     *
+     * Invocation实例获取成功后，调用插件调用处理器的assembleResponse或者assembleThrowable方法将reponse或者throwable信息设置到Invocation实例中。并设定Invocation的结束时间。
+     *
+     * 回调调用监听器InvocationListener的onInvocation方法，判断Invocation是否是一个入口调用，如果是则调用消息投递器的broadcastRecord将录制记录序列化后上传给repeater-console。如果不是则当做子调用保存到录制缓存中。
+     *
+     * *PS：消息投递器当前支持两种模式，在standalone模式下，保存到本地文件；在非standalone模式下上传到repeater-console。
      * 处理return事件
      *
      * @param event return事件
@@ -243,6 +266,8 @@ public class DefaultEventListener implements EventListener {
     /**
      * 关注的事件
      *
+     * 针对单个listener，只处理top的事件
+     * 不同的插件之间的listener相互隔离，所以即使是录制http的请求，java子调用插件的事件也能通过过滤。
      * @param event 事件
      * @return 是否关注
      */
@@ -272,6 +297,9 @@ public class DefaultEventListener implements EventListener {
      * 只有entrance插件负责初始化和清理上下文
      * 子调用无需关心traceContext信息（多线程情况下由ttl负责copy和restore，单线程由entrance负责管理）
      *
+     * 当事件通过第一个过滤时，就会进行跟踪器初始化。
+     * 跟踪器相关的内容在com.alibaba.jvm.sandbox.repeater.plugin.core.trace包中。
+     * 其中我们提到的traceId实际上是这个跟踪器的独立标识。所以无论是录制和回放都会有其独立的traceId。
      * @param event 事件
      */
     protected void initContext(Event event) {
@@ -318,6 +346,7 @@ public class DefaultEventListener implements EventListener {
      * <p>
      * 降级之后只有回放流量可以通过
      *
+     * 进行基础过滤，主要根据系统熔断、降级进行判断。该过滤条件与repeaterConfig中的degrade字段、exceptionThreshold字段有关。
      * @param event 事件
      * @return 是否通过
      */

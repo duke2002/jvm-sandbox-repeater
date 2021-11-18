@@ -17,13 +17,13 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * {@link RepeatCache} 回放缓存
+ * {@link RepeatCache} 回放缓存。回放过程中如何保存回放的mock调用
  * <p>
  *
  * @author zhaoyb1990
  */
 public class RepeatCache {
-
+    //回放缓存
     private static final LoadingCache<String, RepeatContext> CONTEXT_CACHE = CacheBuilder
         .newBuilder()
         .maximumSize(4096)

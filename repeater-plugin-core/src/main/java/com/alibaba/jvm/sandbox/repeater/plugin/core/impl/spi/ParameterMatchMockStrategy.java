@@ -25,8 +25,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.MetaInfServices;
 
 /**
+ * 参数相似度匹配策略。默认使用的mock自调用匹配策略
  * <p>
- * 参数相似度匹配策略
  *
  * @author zhaoyb1990
  */

@@ -89,10 +89,16 @@ public class ReplayServiceImpl implements ReplayService {
         return doRepeat(record, params);
     }
 
+    /**
+     * 添加回放的结果
+     * @param body
+     * @return
+     */
     @Override
     public RepeaterResult<String> saveRepeat(String body) {
         RepeatModel rm;
         try {
+            //先反序列化出RepeatModel对象
             rm = SerializerWrapper.hessianDeserialize(body, RepeatModel.class);
         } catch (SerializeException e) {
             log.error("error occurred when deserialize repeat model", e);
